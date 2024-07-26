@@ -1,40 +1,69 @@
-import React from "react";
-import TodoForm from "./TodoForm";
+import React, { useState } from "react";
 import TodoList from "./TodoList";
+import TodoForm from "./TodoForm";
+import FilterButtons from "./FilterButtons";
 
-class TodoApp extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      todos: [],
-    };
-  }
+const TodoApp = () => {
+  const [todos, setTodos] = useState([
+    { id: 1, text: "Eat healthy", completed: false },
+    { id: 2, text: "Go to the gym", completed: true },
+    { id: 3, text: "Study every day", completed: false },
+    { id: 4, text: "Meeting with Boss", completed: true },
+  ]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("all");
 
-  handleAddTodo = (text) => {
+  const addTodo = (text) => {
     const newTodo = {
-      id: Date.now(),
-      text: text,
+      id: todos.length + 1,
+      text,
+      completed: false,
     };
-    this.setState((prevState) => ({
-      todos: [...prevState.todos, newTodo],
-    }));
+    setTodos([...todos, newTodo]);
   };
 
-  handleDeleteTodo = (id) => {
-    this.setState((prevState) => ({
-      todos: prevState.todos.filter((todo) => todo.id !== id),
-    }));
-  };
-
-  render() {
-    return (
-      <div className="todo-list">
-        <h1>Todo App</h1>
-        <TodoForm onAdd={this.handleAddTodo} />
-        <TodoList todos={this.state.todos} onDelete={this.handleDeleteTodo} />
-      </div>
+  const toggleTodo = (id) => {
+    const updatedTodos = todos.map((todo) =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
     );
-  }
-}
+    setTodos(updatedTodos);
+  };
+
+  const deleteTodo = (id) => {
+    const updatedTodos = todos.filter((todo) => todo.id !== id);
+    setTodos(updatedTodos);
+  };
+
+  const handleFilterChange = (type) => {
+    setFilterType(type);
+  };
+
+  return (
+    <div className="todo-list">
+      <h1>Todo App</h1>
+      <TodoForm addTodo={addTodo} />
+      <div className="Input">
+        <input
+          className="Search-input"
+          type="text"
+          placeholder="Search Tasks..."
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+        />
+      </div>
+      <FilterButtons
+        handleFilterChange={handleFilterChange}
+        filterType={filterType}
+      />
+      <TodoList
+        todos={todos}
+        toggleTodo={toggleTodo}
+        deleteTodo={deleteTodo}
+        searchTerm={searchTerm}
+        filterType={filterType}
+      />
+    </div>
+  );
+};
 
 export default TodoApp;
