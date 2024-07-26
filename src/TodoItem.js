@@ -1,19 +1,28 @@
 import React from "react";
 
-class TodoItem extends React.Component {
-  render() {
-    const { todo, onDelete } = this.props;
+const TodoItem = ({ todo, toggleTodo, deleteTodo }) => {
+  const handleToggle = () => {
+    toggleTodo(todo.id);
+  };
 
-    return (
-      <div>
-        <span className="text">{todo.text}</span>
-        <input type="checkbox" />
-        <button className="delete-button" onClick={() => onDelete(todo.id)}>
-          X
-        </button>
-      </div>
-    );
-  }
-}
+  const handleDelete = () => {
+    deleteTodo(todo.id);
+  };
+
+  return (
+    <div className="Todo-item">
+      <input type="checkbox" checked={todo.completed} onChange={handleToggle} />
+      <span
+        className="text"
+        style={{ textDecoration: todo.completed ? "line-through" : "none" }}
+      >
+        {todo.text}
+      </span>
+      <button className="delete-button" onClick={handleDelete}>
+        X
+      </button>
+    </div>
+  );
+};
 
 export default TodoItem;
